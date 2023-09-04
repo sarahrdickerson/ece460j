@@ -7,10 +7,13 @@ def problem5():
     data = df.values
     
     # Number of rows
-    #print("Number of Patients: ", len(df.index))
+    print("Number of Patients: ", len(df.index))
 
     # Number of columns
-    #print("Number of Features: ",len(data[0]))
+    print("Number of Features: ",len(data[0]) - 1)
+
+    # Number of Patients: 452
+    # Number of Features: 279
 
     # Feature 1 is the age of the patient (avg of about 46.5)
     # Feature 2 is the gender of the patient (avg of about 0.5 implying half male and half female)
@@ -22,7 +25,13 @@ def problem5():
 
     # Replace missing values with the mean of the column
     df = df.replace('?', np.NaN)
-    df = df.fillna(df.mean(numeric_only=True))
+
+    for col in df:
+        df[col] = pd.to_numeric(df[col])
+        df[col] = df[col].fillna(df[col].mean())
+        #print(col, ": ", df[col].mean())
+
+
 
 
     print(df.head())
@@ -33,7 +42,7 @@ def problem5():
 
     # Find the correlation matrix
     corr = df.corr()
-    print(corr)
+    #print(corr)
 
 
 

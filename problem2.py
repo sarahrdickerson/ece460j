@@ -24,8 +24,8 @@ def problem2():
         print(sigmaXi)
     
     _= plt.hist(dataZ[1:1000], bins=100, color='red', alpha=0.5)
-    #plt.show()
-    return 0
+    plt.show()
+    return 
 
 
 problem2()
