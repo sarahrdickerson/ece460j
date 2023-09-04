@@ -44,14 +44,19 @@ def problem5():
     corr = df.corr()
     #print(corr)
 
+    # Find the correlation values for the features
+    corrValues = corr.values
+    print(corrValues)
 
 
-
-
-
+    sorted = np.sort(corrValues)
+    indices = np.argsort(sorted)
+    print(indices)
+    
     
 
- 
+
+
 
 
 
