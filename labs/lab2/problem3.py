@@ -1,7 +1,9 @@
 import os
 import pandas as pd
 
-# Write a program that on input k and XXXX, returns the top k names from year XXXX starting with the letter “s”.
+"""
+Write a program that on input k and XXXX, returns the top k names from year XXXX starting with the letter “s”.
+"""
 def func1(k, year):
     file_url = f"yob{year}.txt"
     df = pd.read_csv(file_url, ',')
@@ -10,8 +12,10 @@ def func1(k, year):
     res = filtered_df.sort_values(by='Freq', ascending=False).head(k)
     print(res['Name'].tolist())
 
-# Write a program that on input Name returns the frequency for men and women of the name Name.
-# Also find the most common first letter in names for men and women respectively across all years.
+"""
+Write a program that on input Name returns the frequency for men and women of the name Name.
+Also find the most common first letter in names for men and women respectively across all years.
+"""
 def func2(name):
     dfs = []
     for file in os.listdir():
@@ -42,6 +46,13 @@ relatively the most popular, though its frequency may have been decreasing over 
 Modify the above to return the relative frequency. Note that in the next coming lectures we
 will learn how to quantify diversity using entropy.
 """
+def func3(name):
+    for file in os.listdir():
+        df = pd.read_table(file, delimiter=',', header=None)
+        df.columns = ['Name', 'Gender', 'Freq']
+        name_freq = df[df['Name'] == name]['Freq'].sum()
+        total_freq = df['Freq'].sum()
+        print(f"The relative frequency for the name {name} in the year {file[3:7]} is {name_freq / total_freq}.")
 
 """
 Find all the names that used to be more popular for one gender, but then became more
@@ -56,3 +67,4 @@ the previous year. Define ”surge” as the largest percentage increase in freq
 os.chdir('Names')
 func1(10, 1995)
 func2('Jessie')
+func3('Mary')
