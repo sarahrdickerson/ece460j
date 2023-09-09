@@ -1,0 +1,42 @@
+import os
+import pandas as pd
+
+# Write a program that on input k and XXXX, returns the top k names from year XXXX starting with the letter “s”.
+def func1(k, year):
+    file_url = f"yob{year}.txt"
+    os.chdir("Names")
+    df = pd.read_csv(file_url, ',')
+    df.columns = ['Name', 'Gender', 'Freq']
+    filtered_df = df[df['Name'].str[0] == 'S']
+    res = filtered_df.sort_values(by='Freq', ascending=False).head(k)
+    return res['Name']
+
+# Write a program that on input Name returns the frequency for men and women of the name Name.
+# Also find the most common first letter in names for men and women respectively across all years.
+def func2(name):
+    os.chdir("Names")
+    dfs = []
+    for file in os.listdir():
+        df = pd.read_csv(file, ',')
+        df.columns = ['Name', 'Gender', 'Freq']
+        dfs.append(df)
+    combined_df = pd.concat(dfs)
+    men_freq = combined_df[
+        (combined_df['Name'] == name) & (combined_df['Gender'] == 'M')
+    ]['Freq'].sum()
+    women_freq = combined_df[
+        (combined_df['Name'] == name) & (combined_df['Gender'] == 'F')
+    ]['Freq'].sum()
+
+    print(f"There are {men_freq} men named {name}.")
+    print(f"There are {women_freq} women named {name}.")
+
+    # Create a new column for the first letter
+    combined_df['First_Char'] = combined_df['Name'].str[0]
+    men_common = combined_df[combined_df['Gender'] == 'M']['First_Char'].value_counts().idxmax()
+    women_common = combined_df[combined_df['Gender'] == 'F']['First_Char'].value_counts().idxmax()
+    print(f"The most common first letter among men is {men_common}.")
+    print(f"The most common first letter among women is {women_common}.")
+
+
+func2('Rachel')
