@@ -58,6 +58,27 @@ def func3(name):
 Find all the names that used to be more popular for one gender, but then became more
 popular for another gender.
 """
+def func4():
+    df = pd.DataFrame(columns=['Name', 'Gender', 'Frequency'])
+
+    i = 0
+    for file in os.listdir():
+        year = file[3:7]
+        data = pd.read_csv(file, delimiter=',', names=['Name', 'Gender', 'Frequency'], header=None)
+        data['Year'] = year
+        """
+        for name, group in data.groupby(['Name', 'Year']):
+            print(group['Frequency'].max().reset_index())
+        """
+        res = data.loc[
+            data.groupby(['Name'])['Frequency'].idxmax()
+        ]
+        df = df.append(res, ignore_index=True)
+    
+    name_counts = df.groupby('Name')['Gender'].nunique()
+    changed_names = name_counts[name_counts > 1].index.tolist()
+    print(changed_names)
+
 
 """
 For a given year Y Y Y Y , identify the name with the highest surge in popularity compared to
@@ -65,6 +86,3 @@ the previous year. Define ”surge” as the largest percentage increase in freq
 """
 
 os.chdir('Names')
-func1(10, 1995)
-func2('Jessie')
-func3('Mary')
