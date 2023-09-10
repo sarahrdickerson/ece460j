@@ -6,7 +6,7 @@ Write a program that on input k and XXXX, returns the top k names from year XXXX
 """
 def func1(k, year):
     file_url = f"yob{year}.txt"
-    df = pd.read_csv(file_url, ',')
+    df = pd.read_csv(file_url, ',', header=None)
     df.columns = ['Name', 'Gender', 'Freq']
     filtered_df = df[df['Name'].str[0] == 'S']
     res = filtered_df.sort_values(by='Freq', ascending=False).head(k)
@@ -19,7 +19,7 @@ Also find the most common first letter in names for men and women respectively a
 def func2(name):
     dfs = []
     for file in os.listdir():
-        df = pd.read_csv(file, ',')
+        df = pd.read_csv(file, ',', None)
         df.columns = ['Name', 'Gender', 'Freq']
         dfs.append(df)
     combined_df = pd.concat(dfs)
@@ -48,7 +48,7 @@ will learn how to quantify diversity using entropy.
 """
 def func3(name):
     for file in os.listdir():
-        df = pd.read_table(file, delimiter=',', header=None)
+        df = pd.read_csv(file, delimiter=',', header=None)
         df.columns = ['Name', 'Gender', 'Freq']
         name_freq = df[df['Name'] == name]['Freq'].sum()
         total_freq = df['Freq'].sum()
@@ -61,15 +61,10 @@ popular for another gender.
 def func4():
     df = pd.DataFrame(columns=['Name', 'Gender', 'Frequency'])
 
-    i = 0
     for file in os.listdir():
         year = file[3:7]
         data = pd.read_csv(file, delimiter=',', names=['Name', 'Gender', 'Frequency'], header=None)
         data['Year'] = year
-        """
-        for name, group in data.groupby(['Name', 'Year']):
-            print(group['Frequency'].max().reset_index())
-        """
         res = data.loc[
             data.groupby(['Name'])['Frequency'].idxmax()
         ]
@@ -84,5 +79,19 @@ def func4():
 For a given year Y Y Y Y , identify the name with the highest surge in popularity compared to
 the previous year. Define ”surge” as the largest percentage increase in frequency.
 """
+def func5(year):
+    prev_year_df = pd.read_csv(f"yob{year - 1}.txt", delimiter=',', names=['Name', 'Gender', 'Prev_Frequency'], header=None)
+    year_df = pd.read_csv(f"yob{year}.txt", delimiter=',', names=['Name', 'Gender', 'Frequency'], header=None)
+    
+    total_prev_freq = prev_year_df['Prev_Frequency'].sum()
+    prev_year_df['Prev_Relative_Freq'] = prev_year_df['Prev_Frequency'] / total_prev_freq
+    total_freq = year_df['Frequency'].sum()
+    year_df['Relative_Freq'] = year_df['Frequency'] / total_freq
+
+    merged_df = prev_year_df.merge(year_df, on='Name')
+    merged_df['Increase'] = merged_df['Relative_Freq'] - merged_df['Prev_Relative_Freq']
+    res = merged_df.loc[merged_df['Increase'].idxmax()]
+    print(f"The name with the highest surge in popularity compared to the previous year is {res['Name']} for the year {year}.")
 
 os.chdir('Names')
+func5(2015)
