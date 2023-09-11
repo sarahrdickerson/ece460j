@@ -89,7 +89,7 @@ def func5(year):
     year_df['Relative_Freq'] = (year_df['Frequency'] / total_freq * 100)
 
     merged_df = pd.merge(prev_year_df, year_df, on=['Name', 'Gender'])
-    merged_df['Increase'] = merged_df['Relative_Freq'] - merged_df['Prev_Relative_Freq']
+    merged_df['Increase'] = ((merged_df['Relative_Freq'] - merged_df['Prev_Relative_Freq']) / (merged_df['Prev_Relative_Freq'])) * 100
     final_df = merged_df.groupby('Name')['Increase'].agg('sum').reset_index()
     res = final_df.loc[final_df['Increase'].idxmax()]
     
