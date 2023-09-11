@@ -84,14 +84,21 @@ def func5(year):
     year_df = pd.read_csv(f"yob{year}.txt", delimiter=',', names=['Name', 'Gender', 'Frequency'], header=None)
     
     total_prev_freq = prev_year_df['Prev_Frequency'].sum()
-    prev_year_df['Prev_Relative_Freq'] = prev_year_df['Prev_Frequency'] / total_prev_freq
+    prev_year_df['Prev_Relative_Freq'] = (prev_year_df['Prev_Frequency'] / total_prev_freq * 100)
     total_freq = year_df['Frequency'].sum()
-    year_df['Relative_Freq'] = year_df['Frequency'] / total_freq
+    year_df['Relative_Freq'] = (year_df['Frequency'] / total_freq * 100)
 
-    merged_df = prev_year_df.merge(year_df, on='Name')
+    merged_df = pd.merge(prev_year_df, year_df, on=['Name', 'Gender'])
     merged_df['Increase'] = merged_df['Relative_Freq'] - merged_df['Prev_Relative_Freq']
-    res = merged_df.loc[merged_df['Increase'].idxmax()]
+    final_df = merged_df.groupby('Name')['Increase'].agg('sum').reset_index()
+    res = final_df.loc[final_df['Increase'].idxmax()]
+    
     print(f"The name with the highest surge in popularity compared to the previous year is {res['Name']} for the year {year}.")
+    #print(merged_df[(merged_df['Name'] == 'Samuel') | (merged_df['Name'] == 'Sophia') | (merged_df['Name'] == 'Liam')])
+    #print(final_df[(final_df['Name'] == 'Samuel') | (final_df['Name'] == 'Sophia') | (final_df['Name'] == 'Liam')])
 
 os.chdir('Names')
-func5(2015)
+func1(23, 2002)
+func2('Jessie')
+func3('Jack')
+func5(2012)
